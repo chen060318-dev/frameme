@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<meta name="theme-color" content="#f7f5f2" />
+<title>FrameMe · 一键头像框 v3</title>
+<style>
+:root{--bg:#f7f5f2;--card:#fff;--ink:#232323;--muted:#7d7a76;--line:#e8e3de;--accent:#242424;--soft:#efebe6;--danger:#b54b4b;--radius:24px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}button,input{font:inherit}button{cursor:pointer}.app{width:min(760px,100%);margin:0 auto;padding:18px 14px 40px}.hero{padding:8px 4px 18px}.eyebrow{font-size:12px;letter-spacing:.14em;color:var(--muted);font-weight:700}h1{font-size:29px;line-height:1.1;margin:8px 0 7px;letter-spacing:-.03em}.sub{font-size:14px;line-height:1.7;color:var(--muted);margin:0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:14px 0}.step{background:#ece8e3;color:#89847f;border-radius:999px;padding:8px 4px;text-align:center;font-size:11px;font-weight:700}.step.active{background:var(--accent);color:white}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:0 8px 30px rgba(50,45,40,.04)}.card h2{font-size:15px;margin:2px 0 12px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.btn{border:1px solid #d9d4ce;background:#fff;color:var(--ink);border-radius:14px;padding:11px 14px;font-weight:700;min-height:44px}.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn.soft{background:var(--soft);border-color:var(--soft)}.btn.danger{color:var(--danger)}.file{position:relative;overflow:hidden}.file input{position:absolute;inset:0;opacity:0;font-size:100px;cursor:pointer}.hint{font-size:12px;line-height:1.6;color:var(--muted);margin:9px 1px 0}.stage-wrap{background:linear-gradient(45deg,#ece9e5 25%,transparent 25%),linear-gradient(-45deg,#ece9e5 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ece9e5 75%),linear-gradient(-45deg,transparent 75%,#ece9e5 75%);background-size:18px 18px;background-position:0 0,0 9px,9px -9px,-9px 0;border-radius:22px;overflow:hidden;position:relative;touch-action:none;border:1px solid var(--line)}#stage{display:block;width:100%;height:auto;aspect-ratio:1/1}.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#aaa39c;font-size:14px;padding:30px;pointer-events:none}.badge{display:inline-flex;align-items:center;gap:6px;background:#f2efeb;color:#6f6b66;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:700}details{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}summary{font-size:13px;font-weight:800;cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}.controls{display:grid;gap:12px;margin-top:12px}.ctl{display:grid;grid-template-columns:96px 1fr 44px;gap:9px;align-items:center;font-size:12px}.ctl label{color:#5f5b57;font-weight:700}input[type=range]{width:100%;accent-color:#242424}.num{text-align:right;color:#8b857f;font-variant-numeric:tabular-nums}.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.seg button{padding:9px 4px;border:1px solid var(--line);background:white;border-radius:12px;font-size:12px;font-weight:700}.seg button.on{background:#242424;color:#fff;border-color:#242424}.status{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px}.status-text{font-size:12px;color:var(--muted);min-height:18px}.download{width:100%;font-size:16px;padding:14px;border-radius:16px}.privacy{font-size:11px;color:#97918b;text-align:center;line-height:1.6;margin-top:9px}.mode-tip{font-size:12px;color:#756f69;background:#f5f2ef;border-radius:12px;padding:9px 10px;margin-top:9px}.hidden{display:none!important}@media(min-width:700px){.app{padding-top:30px}.card{padding:18px}.stage-card{padding:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="hero"><div class="eyebrow">FRAMEME · LOCAL ONLY · V3</div><h1>一键头像框</h1><p class="sub">不会抠图也没关系。把普通头像框图片丢进来，自动去底、挖头像区，再放入自己的头像，手机直接保存成 PNG。</p></header>
+<div class="steps"><div class="step active" id="s1">1 头像框</div><div class="step" id="s2">2 修整</div><div class="step" id="s3">3 头像</div><div class="step" id="s4">4 保存</div></div>
+<section class="card"><h2>① 上传头像框图片</h2><div class="row"><label class="btn primary file">选择头像框<input id="frameInput" type="file" accept="image/*"></label><button class="btn soft" id="autoBtn" disabled>重新自动处理</button><button class="btn danger" id="clearFrameBtn" disabled>清空</button></div><p class="hint">JPG、PNG、截图都可以。网页会从四个角自动去掉连通背景，再尝试从中心挖出头像区域，不会把图片上传到服务器。</p><div class="controls" style="margin-top:14px"><div class="ctl"><label>头像框缩放</label><input id="frameZoom" type="range" min="50" max="180" value="100" disabled><div class="num"><span id="frameZoomVal">100</span>%</div></div><div class="ctl"><label>头像框横向</label><input id="framePosX" type="range" min="-35" max="35" value="0" disabled><div class="num"><span id="framePosXVal">0</span>%</div></div><div class="ctl"><label>头像框纵向</label><input id="framePosY" type="range" min="-35" max="35" value="0" disabled><div class="num"><span id="framePosYVal">0</span>%</div></div><button class="btn soft" id="resetFrameTransformBtn" disabled>头像框恢复默认</button></div><details id="advanced"><summary>高级修整</summary><div class="controls"><div class="ctl"><label>外围去底</label><input id="outerTol" type="range" min="5" max="110" value="36"><div class="num"><span id="outerTolVal">36</span></div></div><div class="ctl"><label>中心去底</label><input id="centerTol" type="range" min="5" max="110" value="42"><div class="num"><span id="centerTolVal">42</span></div></div><div class="ctl"><label>备用圆形区</label><input id="holeSize" type="range" min="18" max="49" value="38"><div class="num"><span id="holeSizeVal">38</span>%</div></div><div class="ctl"><label>头像区横向</label><input id="holeX" type="range" min="25" max="75" value="50"><div class="num"><span id="holeXVal">50</span>%</div></div><div class="ctl"><label>头像区纵向</label><input id="holeY" type="range" min="25" max="75" value="50"><div class="num"><span id="holeYVal">50</span>%</div></div><div><div class="hint" style="margin-bottom:7px">自动处理不准时，用手指直接擦掉或恢复头像框。</div><div class="seg"><button id="modeAvatar" class="on">移动头像</button><button id="modeErase">擦除框</button><button id="modeRestore">恢复框</button></div></div><div class="ctl"><label>画笔大小</label><input id="brushSize" type="range" min="8" max="120" value="42"><div class="num"><span id="brushSizeVal">42</span></div></div><button class="btn" id="punchBtn" disabled>自动识别失败时：按备用圆形区挖孔</button></div></details></section>
+<section class="card stage-card"><h2>② 预览与调整</h2><div class="stage-wrap" id="stageWrap"><canvas id="stage" width="1024" height="1024"></canvas><div class="empty" id="empty">先上传一张头像框图片</div></div><div class="mode-tip" id="modeTip">头像现在会自动填满头像框中心的真实透明区域；上方滑杆调头像框大小/位置，头像可单指拖动、双指缩放。</div><div class="status"><span class="badge" id="modeBadge">模式：移动头像</span><span class="status-text" id="statusText"></span></div></section>
+<section class="card"><h2>③ 上传自己的头像</h2><div class="row"><label class="btn primary file">选择头像<input id="avatarInput" type="file" accept="image/*"></label><button class="btn soft" id="resetAvatarBtn" disabled>头像居中</button><button class="btn danger" id="clearAvatarBtn" disabled>移除头像</button></div><div class="controls"><div class="ctl"><label>头像缩放</label><input id="avatarZoom" type="range" min="50" max="300" value="100" disabled><div class="num"><span id="avatarZoomVal">100</span>%</div></div></div></section>
+<section class="card"><h2>④ 导出</h2><div class="row" style="margin-bottom:10px"><span class="badge">PNG 透明背景</span><span class="badge">1024 × 1024</span><span class="badge">本地处理</span></div><button id="downloadBtn" class="btn primary download" disabled>保存头像 PNG</button><div class="privacy">所有图片只在当前浏览器里处理；刷新或关闭页面后不会保留。</div></section>
+</div>
+<script>
+(()=>{
+const SIZE=1024,stage=document.getElementById('stage'),ctx=stage.getContext('2d',{willReadFrequently:true});
+const frameCanvas=document.createElement('canvas');frameCanvas.width=frameCanvas.height=SIZE;const fctx=frameCanvas.getContext('2d',{willReadFrequently:true});
+const originalCanvas=document.createElement('canvas');originalCanvas.width=originalCanvas.height=SIZE;const octx=originalCanvas.getContext('2d',{willReadFrequently:true});
+const maskCanvas=document.createElement('canvas');maskCanvas.width=maskCanvas.height=SIZE;const mctx=maskCanvas.getContext('2d',{willReadFrequently:true});
+const avatarLayer=document.createElement('canvas');avatarLayer.width=avatarLayer.height=SIZE;const actx=avatarLayer.getContext('2d');
+
+const $=id=>document.getElementById(id);
+const state={frameImg:null,avatarImg:null,holeX:SIZE/2,holeY:SIZE/2,holeR:SIZE*.38,frameScale:1,frameOffsetX:0,frameOffsetY:0,maskBounds:null,maskReady:false,avatarX:SIZE/2,avatarY:SIZE/2,avatarBaseScale:1,avatarScale:1,mode:'avatar',brush:42,pointers:new Map(),pinchStart:null,lastSingle:null};
+function setStatus(msg){$('statusText').textContent=msg||''}
+function updateSteps(){$('s1').classList.toggle('active',!state.frameImg);$('s2').classList.toggle('active',!!state.frameImg&&!state.avatarImg);$('s3').classList.toggle('active',!!state.avatarImg);$('s4').classList.toggle('active',!!state.avatarImg&&!!state.frameImg)}
+function updateUI(){const hasF=!!state.frameImg,hasA=!!state.avatarImg;$('empty').classList.toggle('hidden',hasF||hasA);$('autoBtn').disabled=!hasF;$('clearFrameBtn').disabled=!hasF;$('punchBtn').disabled=!hasF;$('frameZoom').disabled=!hasF;$('framePosX').disabled=!hasF;$('framePosY').disabled=!hasF;$('resetFrameTransformBtn').disabled=!hasF;$('resetAvatarBtn').disabled=!hasA;$('clearAvatarBtn').disabled=!hasA;$('avatarZoom').disabled=!hasA;$('downloadBtn').disabled=!(hasF&&hasA);updateSteps()}
+function loadImage(file){return new Promise((resolve,reject)=>{const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('图片读取失败'))};img.src=url})}
+function drawSquareCover(c,img){c.clearRect(0,0,SIZE,SIZE);const s=Math.min(img.width,img.height),sx=(img.width-s)/2,sy=(img.height-s)/2;c.drawImage(img,sx,sy,s,s,0,0,SIZE,SIZE)}
+function colorDist(data,idx,seed){const dr=data[idx]-seed[0],dg=data[idx+1]-seed[1],db=data[idx+2]-seed[2];return Math.sqrt(dr*dr+dg*dg+db*db)}
+function floodTransparent(imgData,seeds,tolerance){const{data,width,height}=imgData;for(const s of seeds){const visited=new Uint8Array(width*height),stack=new Int32Array(width*height),sx=Math.max(0,Math.min(width-1,Math.round(s.x))),sy=Math.max(0,Math.min(height-1,Math.round(s.y))),start=sy*width+sx,bi=start*4;if(data[bi+3]===0)continue;const seed=[data[bi],data[bi+1],data[bi+2]];let top=0;stack[top++]=start;visited[start]=1;while(top){const p=stack[--top],i=p*4;if(data[i+3]===0||colorDist(data,i,seed)>tolerance)continue;data[i+3]=0;const x=p%width,y=(p/width)|0;const push=n=>{if(!visited[n]){visited[n]=1;stack[top++]=n}};if(x>0)push(p-1);if(x<width-1)push(p+1);if(y>0)push(p-width);if(y<height-1)push(p+width)}}}
+function inferHoleRadius(imgData){const{data,width}=imgData,cx=Math.round(state.holeX),cy=Math.round(state.holeY),dirs=[[1,0],[-1,0],[0,1],[0,-1]],ds=[];for(const[dx,dy]of dirs){let d=0;while(d<width/2){const x=cx+dx*d,y=cy+dy*d;if(x<0||y<0||x>=width||y>=width)break;const a=data[(Math.round(y)*width+Math.round(x))*4+3];if(a>28)break;d++}if(d>20)ds.push(d)}if(ds.length>=3){const r=Math.max(80,Math.min(...ds)*.96);if(r>SIZE*.18&&r<SIZE*.49){state.holeR=r;$('holeSize').value=Math.round(r/SIZE*100);$('holeSizeVal').textContent=Math.round(r/SIZE*100)}}}
+
+function findTransparentSeed(imgData){
+  const {data,width,height}=imgData;
+  const cx=Math.round(state.holeX), cy=Math.round(state.holeY);
+  const maxR=Math.round(SIZE*.22);
+  for(let r=0;r<=maxR;r+=4){
+    const pts=[
+      [cx+r,cy],[cx-r,cy],[cx,cy+r],[cx,cy-r],
+      [cx+r,cy+r],[cx-r,cy+r],[cx+r,cy-r],[cx-r,cy-r]
+    ];
+    for(const [x,y] of pts){
+      if(x<0||y<0||x>=width||y>=height) continue;
+      const a=data[(y*width+x)*4+3];
+      if(a<24) return {x,y};
+    }
+  }
+  return null;
+}
+
+function buildCenterMask(){
+  state.maskReady=false; state.maskBounds=null;
+  mctx.clearRect(0,0,SIZE,SIZE);
+  if(!state.frameImg) return false;
+
+  const id=fctx.getImageData(0,0,SIZE,SIZE);
+  const {data,width,height}=id;
+  const seed=findTransparentSeed(id);
+  if(!seed) return false;
+
+  const total=width*height;
+  const seen=new Uint8Array(total);
+  const stack=new Int32Array(total);
+  let top=0;
+  const start=seed.y*width+seed.x;
+  stack[top++]=start;
+
+  const mask=mctx.createImageData(width,height);
+  let count=0,minX=width,minY=height,maxX=0,maxY=0;
+
+  while(top){
+    const p=stack[--top];
+    if(seen[p]) continue;
+    seen[p]=1;
+    const i=p*4;
+    if(data[i+3]>=40) continue; // only the real transparent opening
+
+    const x=p%width, y=(p/width)|0;
+    mask.data[i]=255; mask.data[i+1]=255; mask.data[i+2]=255; mask.data[i+3]=255;
+    count++;
+    if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;
+
+    if(x>0) stack[top++]=p-1;
+    if(x<width-1) stack[top++]=p+1;
+    if(y>0) stack[top++]=p-width;
+    if(y<height-1) stack[top++]=p+width;
+  }
+
+  // reject outer background / tiny accidental islands
+  const areaRatio=count/total;
+  if(count<5000 || areaRatio>0.68) return false;
+
+  mctx.putImageData(mask,0,0);
+  state.maskBounds={minX,minY,maxX,maxY,width:maxX-minX+1,height:maxY-minY+1};
+  state.maskReady=true;
+  return true;
+}
+
+function getDisplayMaskBounds(){
+  if(!state.maskReady || !state.maskBounds){
+    const h=getDisplayHole();
+    return {minX:h.x-h.r,minY:h.y-h.r,maxX:h.x+h.r,maxY:h.y+h.r,width:h.r*2,height:h.r*2,cx:h.x,cy:h.y};
+  }
+  const b=state.maskBounds;
+  const cx0=(b.minX+b.maxX)/2, cy0=(b.minY+b.maxY)/2;
+  const cx=SIZE/2+state.frameOffsetX+(cx0-SIZE/2)*state.frameScale;
+  const cy=SIZE/2+state.frameOffsetY+(cy0-SIZE/2)*state.frameScale;
+  const w=b.width*state.frameScale, h=b.height*state.frameScale;
+  return {minX:cx-w/2,minY:cy-h/2,maxX:cx+w/2,maxY:cy+h/2,width:w,height:h,cx,cy};
+}
+
+function processFrame(){if(!state.frameImg)return;drawSquareCover(octx,state.frameImg);fctx.clearRect(0,0,SIZE,SIZE);fctx.drawImage(originalCanvas,0,0);let id=fctx.getImageData(0,0,SIZE,SIZE);floodTransparent(id,[{x:2,y:2},{x:SIZE-3,y:2},{x:2,y:SIZE-3},{x:SIZE-3,y:SIZE-3}],+$('outerTol').value);floodTransparent(id,[{x:state.holeX,y:state.holeY}],+$('centerTol').value);fctx.putImageData(id,0,0);inferHoleRadius(id);
+const ok=buildCenterMask();
+if(ok){setStatus('已识别真实中心透明区域，头像会自动铺满洞口')}
+else{setStatus('未稳定识别中心洞口，已切换到备用圆形头像区，可在高级修整里调整')}
+if(state.avatarImg)resetAvatar();else render()
+}
+function getDisplayHole(){return{x:SIZE/2+state.frameOffsetX+(state.holeX-SIZE/2)*state.frameScale,y:SIZE/2+state.frameOffsetY+(state.holeY-SIZE/2)*state.frameScale,r:state.holeR*state.frameScale}}
+function syncAvatarWithFrame(prevBounds){if(!state.avatarImg)return;
+const b=getDisplayMaskBounds();
+if(prevBounds){state.avatarX+=b.cx-prevBounds.cx;state.avatarY+=b.cy-prevBounds.cy}
+state.avatarBaseScale=Math.max(b.width/state.avatarImg.width,b.height/state.avatarImg.height)
+}
+function resetAvatar(){if(!state.avatarImg)return;
+const b=getDisplayMaskBounds();
+state.avatarX=b.cx;state.avatarY=b.cy;
+state.avatarBaseScale=Math.max(b.width/state.avatarImg.width,b.height/state.avatarImg.height);
+state.avatarScale=1;
+$('avatarZoom').value=100;$('avatarZoomVal').textContent='100';
+render()
+}
+function render(showGuide=false){
+  ctx.clearRect(0,0,SIZE,SIZE);
+
+  if(state.avatarImg){
+    actx.clearRect(0,0,SIZE,SIZE);
+    const sc=state.avatarBaseScale*state.avatarScale;
+    const w=state.avatarImg.width*sc, h=state.avatarImg.height*sc;
+    actx.drawImage(state.avatarImg,state.avatarX-w/2,state.avatarY-h/2,w,h);
+
+    actx.save();
+    actx.globalCompositeOperation='destination-in';
+    if(state.maskReady){
+      actx.translate(SIZE/2+state.frameOffsetX,SIZE/2+state.frameOffsetY);
+      actx.scale(state.frameScale,state.frameScale);
+      actx.drawImage(maskCanvas,-SIZE/2,-SIZE/2);
+    }else{
+      const hh=getDisplayHole();
+      actx.beginPath();actx.arc(hh.x,hh.y,hh.r,0,Math.PI*2);actx.fill();
+    }
+    actx.restore();
+    actx.globalCompositeOperation='source-over';
+    ctx.drawImage(avatarLayer,0,0);
+  }
+
+  if(state.frameImg){
+    ctx.save();
+    ctx.translate(SIZE/2+state.frameOffsetX,SIZE/2+state.frameOffsetY);
+    ctx.scale(state.frameScale,state.frameScale);
+    ctx.drawImage(frameCanvas,-SIZE/2,-SIZE/2);
+    ctx.restore();
+  }
+
+  if(showGuide || state.mode!=='avatar'){
+    ctx.save();
+    ctx.setLineDash([12,10]);ctx.lineWidth=4;ctx.strokeStyle='rgba(30,30,30,.5)';
+    const b=getDisplayMaskBounds();
+    if(state.maskReady){
+      ctx.strokeRect(b.minX,b.minY,b.width,b.height);
+    }else{
+      const hh=getDisplayHole();ctx.beginPath();ctx.arc(hh.x,hh.y,hh.r,0,Math.PI*2);ctx.stroke();
+    }
+    ctx.restore();
+  }
+  updateUI()
+}
+function setMode(mode){state.mode=mode;['Avatar','Erase','Restore'].forEach(n=>$('mode'+n).classList.remove('on'));$('mode'+mode[0].toUpperCase()+mode.slice(1)).classList.add('on');const label={avatar:'移动头像',erase:'擦除头像框',restore:'恢复头像框'}[mode];$('modeBadge').textContent='模式：'+label;$('modeTip').textContent=mode==='avatar'?'头像现在会自动填满头像框中心的真实透明区域；上方滑杆调头像框大小/位置，头像可单指拖动、双指缩放。':(mode==='erase'?'在预览图上用手指涂抹，擦掉不需要的头像框部分。':'在预览图上用手指涂抹，把误擦掉的原图区域恢复回来。');render(mode!=='avatar')}
+function canvasPoint(ev){const r=stage.getBoundingClientRect();return{x:(ev.clientX-r.left)/r.width*SIZE,y:(ev.clientY-r.top)/r.height*SIZE}}
+function paintFrame(x,y,restore=false){if(!state.frameImg)return;const localX=(x-(SIZE/2+state.frameOffsetX))/state.frameScale+SIZE/2,localY=(y-(SIZE/2+state.frameOffsetY))/state.frameScale+SIZE/2,r=state.brush*(SIZE/512)/state.frameScale;x=localX;y=localY;const x0=Math.max(0,Math.floor(x-r)),x1=Math.min(SIZE-1,Math.ceil(x+r)),y0=Math.max(0,Math.floor(y-r)),y1=Math.min(SIZE-1,Math.ceil(y+r)),cur=fctx.getImageData(x0,y0,x1-x0+1,y1-y0+1),orig=octx.getImageData(x0,y0,x1-x0+1,y1-y0+1);for(let yy=0;yy<cur.height;yy++)for(let xx=0;xx<cur.width;xx++){const gx=x0+xx,gy=y0+yy,dx=gx-x,dy=gy-y;if(dx*dx+dy*dy<=r*r){const i=(yy*cur.width+xx)*4;if(restore){cur.data[i]=orig.data[i];cur.data[i+1]=orig.data[i+1];cur.data[i+2]=orig.data[i+2];cur.data[i+3]=orig.data[i+3]}else cur.data[i+3]=0}}fctx.putImageData(cur,x0,y0);render(true)}
+stage.addEventListener('pointerdown',ev=>{stage.setPointerCapture?.(ev.pointerId);const p=canvasPoint(ev);state.pointers.set(ev.pointerId,p);if(state.mode==='erase'||state.mode==='restore'){paintFrame(p.x,p.y,state.mode==='restore');return}if(state.pointers.size===1)state.lastSingle=p;if(state.pointers.size===2){const[a,b]=[...state.pointers.values()];state.pinchStart={d:Math.hypot(a.x-b.x,a.y-b.y),scale:state.avatarScale}}});
+stage.addEventListener('pointermove',ev=>{if(!state.pointers.has(ev.pointerId))return;const p=canvasPoint(ev);state.pointers.set(ev.pointerId,p);if(state.mode==='erase'||state.mode==='restore'){paintFrame(p.x,p.y,state.mode==='restore');return}if(!state.avatarImg)return;if(state.pointers.size===1&&state.lastSingle){state.avatarX+=p.x-state.lastSingle.x;state.avatarY+=p.y-state.lastSingle.y;state.lastSingle=p;render()}else if(state.pointers.size===2&&state.pinchStart){const[a,b]=[...state.pointers.values()],d=Math.hypot(a.x-b.x,a.y-b.y);state.avatarScale=Math.max(.5,Math.min(3,state.pinchStart.scale*d/state.pinchStart.d));const z=Math.round(state.avatarScale*100);$('avatarZoom').value=z;$('avatarZoomVal').textContent=z;render()}});
+function pointerEnd(ev){
+  state.pointers.delete(ev.pointerId);
+  if(state.pointers.size===1)state.lastSingle=[...state.pointers.values()][0];else state.lastSingle=null;
+  if(state.pointers.size<2)state.pinchStart=null;
+  if((state.mode==='erase'||state.mode==='restore')&&state.frameImg){
+    const before=getDisplayMaskBounds();
+    buildCenterMask();
+    syncAvatarWithFrame(before);
+    render(true);
+  }
+}stage.addEventListener('pointerup',pointerEnd);stage.addEventListener('pointercancel',pointerEnd);
+$('frameInput').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{setStatus('正在读取头像框…');state.frameImg=await loadImage(file);state.holeX=SIZE/2;state.holeY=SIZE/2;state.holeR=SIZE*.38;state.frameScale=1;state.frameOffsetX=0;state.frameOffsetY=0;$('frameZoom').value=100;$('frameZoomVal').textContent='100';$('framePosX').value=0;$('framePosXVal').textContent='0';$('framePosY').value=0;$('framePosYVal').textContent='0';$('holeX').value=50;$('holeXVal').textContent='50';$('holeY').value=50;$('holeYVal').textContent='50';processFrame();if(state.avatarImg)resetAvatar();$('empty').classList.add('hidden')}catch(err){setStatus(err.message||'读取失败')}});
+$('avatarInput').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{state.avatarImg=await loadImage(file);resetAvatar();setMode('avatar');setStatus('头像已载入，可直接拖动或双指缩放')}catch(err){setStatus(err.message||'读取失败')}});
+$('autoBtn').onclick=processFrame;$('clearFrameBtn').onclick=()=>{state.frameImg=null;state.frameScale=1;state.frameOffsetX=0;state.frameOffsetY=0;state.maskReady=false;state.maskBounds=null;fctx.clearRect(0,0,SIZE,SIZE);octx.clearRect(0,0,SIZE,SIZE);mctx.clearRect(0,0,SIZE,SIZE);setStatus('');render()};$('clearAvatarBtn').onclick=()=>{state.avatarImg=null;setStatus('');render()};$('resetAvatarBtn').onclick=resetAvatar;
+$('frameZoom').oninput=e=>{const prev=getDisplayMaskBounds();state.frameScale=+e.target.value/100;$('frameZoomVal').textContent=e.target.value;syncAvatarWithFrame(prev);render(true)};
+$('framePosX').oninput=e=>{const prev=getDisplayMaskBounds();state.frameOffsetX=SIZE*(+e.target.value/100);$('framePosXVal').textContent=e.target.value;syncAvatarWithFrame(prev);render(true)};
+$('framePosY').oninput=e=>{const prev=getDisplayMaskBounds();state.frameOffsetY=SIZE*(+e.target.value/100);$('framePosYVal').textContent=e.target.value;syncAvatarWithFrame(prev);render(true)};
+$('resetFrameTransformBtn').onclick=()=>{const prev=getDisplayMaskBounds();state.frameScale=1;state.frameOffsetX=0;state.frameOffsetY=0;$('frameZoom').value=100;$('frameZoomVal').textContent='100';$('framePosX').value=0;$('framePosXVal').textContent='0';$('framePosY').value=0;$('framePosYVal').textContent='0';syncAvatarWithFrame(prev);setStatus('头像框已恢复默认大小和位置');render(true)};
+$('outerTol').oninput=e=>{$('outerTolVal').textContent=e.target.value};$('centerTol').oninput=e=>{$('centerTolVal').textContent=e.target.value};$('holeSize').oninput=e=>{$('holeSizeVal').textContent=e.target.value;state.holeR=SIZE*(+e.target.value/100);if(!state.maskReady){if(state.avatarImg)resetAvatar();else render(true)}};$('holeX').oninput=e=>{state.holeX=SIZE*(+e.target.value/100);$('holeXVal').textContent=e.target.value;if(state.avatarImg)resetAvatar();else render(true)};$('holeY').oninput=e=>{state.holeY=SIZE*(+e.target.value/100);$('holeYVal').textContent=e.target.value;if(state.avatarImg)resetAvatar();else render(true)};$('brushSize').oninput=e=>{state.brush=+e.target.value;$('brushSizeVal').textContent=e.target.value};$('avatarZoom').oninput=e=>{state.avatarScale=+e.target.value/100;$('avatarZoomVal').textContent=e.target.value;render()};
+$('modeAvatar').onclick=()=>setMode('avatar');$('modeErase').onclick=()=>setMode('erase');$('modeRestore').onclick=()=>setMode('restore');
+$('punchBtn').onclick=()=>{if(!state.frameImg)return;const id=fctx.getImageData(0,0,SIZE,SIZE),d=id.data,r2=state.holeR*state.holeR,x0=Math.max(0,Math.floor(state.holeX-state.holeR)),x1=Math.min(SIZE-1,Math.ceil(state.holeX+state.holeR)),y0=Math.max(0,Math.floor(state.holeY-state.holeR)),y1=Math.min(SIZE-1,Math.ceil(state.holeY+state.holeR));for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const dx=x-state.holeX,dy=y-state.holeY;if(dx*dx+dy*dy<r2)d[(y*SIZE+x)*4+3]=0}fctx.putImageData(id,0,0);
+buildCenterMask();
+if(state.avatarImg)resetAvatar();
+setStatus('已用备用圆形区挖孔，并重新生成真实透明区域蒙版；如误删可用“恢复框”刷回来');
+render(true)};
+$('downloadBtn').onclick=()=>{if(!state.frameImg||!state.avatarImg)return;render(false);stage.toBlob(blob=>{if(!blob){setStatus('导出失败，请重试');return}const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='avatar-frame-1024.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);setStatus('PNG 已生成；若手机浏览器弹出预览，可长按图片保存')},'image/png')};render();
+})();
+</script>
+</body>
+</html>
